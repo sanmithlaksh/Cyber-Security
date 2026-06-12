@@ -1,55 +1,21 @@
 package com.cybershield.portal.model;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-
-@Entity
-@Table(name = "reports")
 public class ThreatReport {
 
-    @Id
-    @Column(name = "report_id")
     private String reportId; // Format: CYB-YYYY-NNNN
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
     private User user; // null if reported anonymously
-
-    @Column(nullable = false)
     private String title;
-
-    @Column(name = "threat_type", nullable = false)
     private String threatType;
-
-    @Column(columnDefinition = "TEXT")
     private String description;
-
-    @Column(name = "date_time")
-    private LocalDateTime dateTime;
-
-    @Column(name = "website_url")
+    private String dateTime; // Stored as formatted String for Firestore compatibility
     private String websiteUrl;
-
-    @Column(name = "evidence_path")
     private String evidencePath;
-
     private String location;
-
-    @Column(name = "contact_info")
     private String contactInfo;
-
-    @Column(name = "risk_score")
     private int riskScore;
-
     private String severity; // SAFE, MEDIUM, HIGH, CRITICAL
-
     private String status; // SUBMITTED, UNDER_REVIEW, INVESTIGATING, RESOLVED, CLOSED
-
-    @Column(name = "analyst_notes", columnDefinition = "TEXT")
     private String analystNotes;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "analyst_id")
     private User analyst; // Analyst investigating the case
 
     public ThreatReport() {}
@@ -94,11 +60,11 @@ public class ThreatReport {
         this.description = description;
     }
 
-    public LocalDateTime getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
+    public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
 

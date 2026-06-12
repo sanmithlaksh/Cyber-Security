@@ -90,7 +90,14 @@ public class CertificateGenerator {
         PdfPCell dateCell = new PdfPCell();
         dateCell.setBorder(Rectangle.NO_BORDER);
         dateCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        Paragraph dateVal = new Paragraph(result.getDateCompleted().format(DATE_FORMATTER), valFont);
+        String formattedDate = "";
+        try {
+            java.time.LocalDateTime dt = java.time.LocalDateTime.parse(result.getDateCompleted(), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            formattedDate = dt.format(DATE_FORMATTER);
+        } catch (Exception e) {
+            formattedDate = result.getDateCompleted();
+        }
+        Paragraph dateVal = new Paragraph(formattedDate, valFont);
         dateVal.setAlignment(Element.ALIGN_CENTER);
         Paragraph dateLabel = new Paragraph("DATE ISSUED", footerFont);
         dateLabel.setAlignment(Element.ALIGN_CENTER);

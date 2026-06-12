@@ -56,7 +56,9 @@ public class DatabaseInitializer implements CommandLineRunner {
                     "ROLE_USER"
             );
 
-            userRepository.saveAll(Arrays.asList(admin, analyst, standardUser));
+            for (User u : Arrays.asList(admin, analyst, standardUser)) {
+                userRepository.save(u);
+            }
             System.out.println(">>> Database Seeded: Default Users Created.");
             System.out.println("    Admin: admin@cybershield.com / Admin@123");
             System.out.println("    Analyst: analyst@cybershield.com / Analyst@123");
@@ -72,7 +74,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                             "HIGH",
                             "Scammers pose as friends or support representatives asking for a 6-digit WhatsApp verification code sent to your phone. Sharing it compromises your account.",
                             "Never share verification PINs/OTPs. Enable 2-step verification inside WhatsApp settings.",
-                            LocalDate.now().minusDays(10)
+                            LocalDate.now().minusDays(10).toString()
                     ),
                     new ThreatIntel(
                             "Fake Banking Website",
@@ -80,7 +82,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                             "CRITICAL",
                             "Spoofed login pages mimicking legitimate banking interfaces (e.g. secure-bank-login.xyz) designed to capture account credentials and high-risk transfer tokens.",
                             "Always verify the URL matches your bank's exact domain. Use banking apps instead of search engine ads.",
-                            LocalDate.now().minusDays(5)
+                            LocalDate.now().minusDays(5).toString()
                     ),
                     new ThreatIntel(
                             "QR Code Payment Fraud",
@@ -88,7 +90,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                             "MEDIUM",
                             "Victims are sent a QR code under the guise of receiving payment. Scanning the code and entering their UPI PIN actually deducts money from their account.",
                             "Remember: You NEVER need to enter your PIN or scan a QR code to RECEIVE money.",
-                            LocalDate.now().minusDays(2)
+                            LocalDate.now().minusDays(2).toString()
                     ),
                     new ThreatIntel(
                             "Cryptocurrency Investment Scam",
@@ -96,7 +98,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                             "CRITICAL",
                             "Fake high-yield investment web portals (such as double-your-crypto.cc) claiming automated high returns, locking deposited funds permanently.",
                             "Avoid platforms promising guaranteed returns. Research platform registrations with regulators.",
-                            LocalDate.now().minusDays(8)
+                            LocalDate.now().minusDays(8).toString()
                     ),
                     new ThreatIntel(
                             "Fake Job Recruitment Scam",
@@ -104,7 +106,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                             "MEDIUM",
                             "Victims receive SMS or WhatsApp messages offering high-paying part-time remote work. They are asked to pay processing fees or deposit capital.",
                             "Never pay to get a job. Be wary of recruitment conducted entirely over WhatsApp/Telegram.",
-                            LocalDate.now().minusDays(1)
+                            LocalDate.now().minusDays(1).toString()
                     )
             );
             intelRepository.saveAll(threats);

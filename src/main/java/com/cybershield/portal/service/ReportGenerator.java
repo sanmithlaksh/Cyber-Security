@@ -91,7 +91,7 @@ public class ReportGenerator {
             table.addCell(sevCell);
             
             table.addCell(new Phrase(report.getStatus(), bodyFont));
-            table.addCell(new Phrase(report.getDateTime() != null ? report.getDateTime().format(DATE_FORMATTER) : "N/A", bodyFont));
+            table.addCell(new Phrase(report.getDateTime() != null ? report.getDateTime() : "N/A", bodyFont));
         }
 
         document.add(table);
@@ -139,7 +139,7 @@ public class ReportGenerator {
                 row.createCell(3).setCellValue(report.getTitle());
                 row.createCell(4).setCellValue(report.getThreatType());
                 row.createCell(5).setCellValue(report.getDescription() != null ? report.getDescription() : "");
-                row.createCell(6).setCellValue(report.getDateTime() != null ? report.getDateTime().format(DATE_FORMATTER) : "N/A");
+                row.createCell(6).setCellValue(report.getDateTime() != null ? report.getDateTime() : "N/A");
                 row.createCell(7).setCellValue(report.getWebsiteUrl() != null ? report.getWebsiteUrl() : "");
                 row.createCell(8).setCellValue(report.getRiskScore());
                 row.createCell(9).setCellValue(report.getSeverity());
@@ -174,7 +174,7 @@ public class ReportGenerator {
                         escapeCsv(report.getReportId()),
                         escapeCsv(report.getTitle()),
                         escapeCsv(report.getThreatType()),
-                        report.getDateTime() != null ? report.getDateTime().format(DATE_FORMATTER) : "",
+                        report.getDateTime() != null ? report.getDateTime() : "",
                         report.getRiskScore(),
                         escapeCsv(report.getSeverity()),
                         escapeCsv(report.getStatus()),

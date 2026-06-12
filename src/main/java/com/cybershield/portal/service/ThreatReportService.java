@@ -46,7 +46,7 @@ public class ThreatReportService {
         report.setWebsiteUrl(url);
         report.setLocation(location);
         report.setContactInfo(contactInfo);
-        report.setDateTime(LocalDateTime.now());
+        report.setDateTime(LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         report.setUser(reporter);
         report.setStatus("SUBMITTED");
 

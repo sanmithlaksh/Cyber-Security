@@ -100,7 +100,7 @@ public class QuizController {
                 category,
                 scorePercentage,
                 totalQuestions,
-                LocalDateTime.now(),
+                LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                 certUuid
         );
         resultRepository.save(result);

@@ -145,7 +145,7 @@ public class AdminController {
             Principal principal) {
         
         ThreatIntel intel = new ThreatIntel(
-                name, category, riskLevel, description, preventionMethods, LocalDate.now());
+                name, category, riskLevel, description, preventionMethods, LocalDate.now().toString());
         intelRepository.save(intel);
         return "redirect:/admin/threats";
     }
@@ -181,7 +181,15 @@ public class AdminController {
 
         if (threshold != null) {
             reports = reports.stream()
-                    .filter(r -> r.getDateTime() != null && r.getDateTime().isAfter(threshold))
+                    .filter(r -> {
+                        if (r.getDateTime() == null) return false;
+                        try {
+                            LocalDateTime dt = LocalDateTime.parse(r.getDateTime(), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                            return dt.isAfter(threshold);
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    })
                     .collect(Collectors.toList());
         }
 

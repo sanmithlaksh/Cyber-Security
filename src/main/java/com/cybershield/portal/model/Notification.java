@@ -1,32 +1,16 @@
 package com.cybershield.portal.model;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-
-@Entity
-@Table(name = "notifications")
 public class Notification {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @Column(nullable = false, length = 1000)
     private String message;
-
-    @Column(name = "read_status", nullable = false)
     private boolean readStatus; // true if read, false if unread
-
-    @Column(name = "date_created")
-    private LocalDateTime dateCreated;
+    private String dateCreated; // Stored as formatted String
 
     public Notification() {}
 
-    public Notification(User user, String message, boolean readStatus, LocalDateTime dateCreated) {
+    public Notification(User user, String message, boolean readStatus, String dateCreated) {
         this.user = user;
         this.message = message;
         this.readStatus = readStatus;
@@ -65,11 +49,11 @@ public class Notification {
         this.readStatus = readStatus;
     }
 
-    public LocalDateTime getDateCreated() {
+    public String getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(LocalDateTime dateCreated) {
+    public void setDateCreated(String dateCreated) {
         this.dateCreated = dateCreated;
     }
 }

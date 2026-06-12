@@ -1,37 +1,18 @@
 package com.cybershield.portal.model;
 
-import jakarta.persistence.*;
-import java.time.LocalDate;
-
-@Entity
-@Table(name = "threats")
 public class ThreatIntel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "threat_name", nullable = false)
     private String name;
-
-    @Column(nullable = false)
     private String category;
-
-    @Column(name = "risk_level", nullable = false)
     private String riskLevel; // SAFE, MEDIUM, HIGH, CRITICAL
-
-    @Column(columnDefinition = "TEXT")
     private String description;
-
-    @Column(name = "prevention_methods", columnDefinition = "TEXT")
     private String preventionMethods;
-
-    @Column(name = "date_added")
-    private LocalDate dateAdded;
+    private String dateAdded; // Stored as formatted String
 
     public ThreatIntel() {}
 
-    public ThreatIntel(String name, String category, String riskLevel, String description, String preventionMethods, LocalDate dateAdded) {
+    public ThreatIntel(String name, String category, String riskLevel, String description, String preventionMethods, String dateAdded) {
         this.name = name;
         this.category = category;
         this.riskLevel = riskLevel;
@@ -88,11 +69,11 @@ public class ThreatIntel {
         this.preventionMethods = preventionMethods;
     }
 
-    public LocalDate getDateAdded() {
+    public String getDateAdded() {
         return dateAdded;
     }
 
-    public void setDateAdded(LocalDate dateAdded) {
+    public void setDateAdded(String dateAdded) {
         this.dateAdded = dateAdded;
     }
 }

@@ -1,34 +1,14 @@
 package com.cybershield.portal.model;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "quiz_questions")
 public class QuizQuestion {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
     private String category; // Phishing, Passwords, Social Engineering, Network, Browsing
-
-    @Column(name = "question_text", nullable = false, length = 1000)
     private String questionText;
-
-    @Column(name = "option_a", nullable = false)
     private String optionA;
-
-    @Column(name = "option_b", nullable = false)
     private String optionB;
-
-    @Column(name = "option_c", nullable = false)
     private String optionC;
-
-    @Column(name = "option_d", nullable = false)
     private String optionD;
-
-    @Column(name = "correct_answer", nullable = false)
     private String correctAnswer; // "A", "B", "C", "D"
 
     public QuizQuestion() {}

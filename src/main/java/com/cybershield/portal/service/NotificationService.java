@@ -21,7 +21,7 @@ public class NotificationService {
     }
 
     public Notification createNotification(User user, String message) {
-        Notification notification = new Notification(user, message, false, LocalDateTime.now());
+        Notification notification = new Notification(user, message, false, LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         Notification saved = notificationRepository.save(notification);
 
         // Push real-time notification to the user's specific WebSocket queue

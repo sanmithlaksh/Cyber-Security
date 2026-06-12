@@ -1,38 +1,18 @@
 package com.cybershield.portal.model;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-
-@Entity
-@Table(name = "quiz_results")
 public class QuizResult {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @Column(nullable = false)
     private String category;
-
-    @Column(nullable = false)
     private int score;
-
-    @Column(name = "total_questions", nullable = false)
     private int totalQuestions;
-
-    @Column(name = "date_completed")
-    private LocalDateTime dateCompleted;
-
-    @Column(name = "certificate_uuid")
+    private String dateCompleted; // Stored as formatted String
     private String certificateUuid; // UUID for PDF validation
 
     public QuizResult() {}
 
-    public QuizResult(User user, String category, int score, int totalQuestions, LocalDateTime dateCompleted, String certificateUuid) {
+    public QuizResult(User user, String category, int score, int totalQuestions, String dateCompleted, String certificateUuid) {
         this.user = user;
         this.category = category;
         this.score = score;
@@ -81,11 +61,11 @@ public class QuizResult {
         this.totalQuestions = totalQuestions;
     }
 
-    public LocalDateTime getDateCompleted() {
+    public String getDateCompleted() {
         return dateCompleted;
     }
 
-    public void setDateCompleted(LocalDateTime dateCompleted) {
+    public void setDateCompleted(String dateCompleted) {
         this.dateCompleted = dateCompleted;
     }
 
