@@ -15,6 +15,8 @@ import java.io.InputStream;
 public class FirebaseConfig {
 
     private boolean active = false;
+    private com.google.auth.oauth2.GoogleCredentials credentials;
+    private String projectId;
 
     @PostConstruct
     public void initialize() {
@@ -30,8 +32,14 @@ public class FirebaseConfig {
                 return;
             }
 
+            com.google.auth.oauth2.GoogleCredentials creds = com.google.auth.oauth2.GoogleCredentials.fromStream(serviceAccount);
+            this.credentials = creds;
+            if (creds instanceof com.google.auth.oauth2.ServiceAccountCredentials) {
+                this.projectId = ((com.google.auth.oauth2.ServiceAccountCredentials) creds).getProjectId();
+            }
+
             FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setCredentials(creds)
                     .build();
 
             if (FirebaseApp.getApps().isEmpty()) {
@@ -53,6 +61,16 @@ public class FirebaseConfig {
         if (!active) {
             return null;
         }
-        return FirestoreClient.getFirestore();
+        try {
+            com.google.cloud.firestore.FirestoreOptions firestoreOptions = com.google.cloud.firestore.FirestoreOptions.getDefaultInstance().toBuilder()
+                    .setCredentials(credentials)
+                    .setProjectId(projectId)
+                    .setDatabaseId("CyberSecurity")
+                    .build();
+            return firestoreOptions.getService();
+        } catch (Exception e) {
+            System.err.println("Error initializing Firestore named database 'CyberSecurity': " + e.getMessage());
+            return FirestoreClient.getFirestore();
+        }
     }
 }
