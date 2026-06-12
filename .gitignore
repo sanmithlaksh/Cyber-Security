@@ -33,3 +33,7 @@ src/main/resources/static/uploads/
 
 # Crash dumps
 clear_log.sh
+
+# Firebase service account credentials (sensitive private keys)
+src/main/resources/serviceAccountKey.json
+*firebase-adminsdk*.json

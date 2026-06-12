@@ -62,15 +62,10 @@ public class FirebaseConfig {
             return null;
         }
         try {
-            com.google.cloud.firestore.FirestoreOptions firestoreOptions = com.google.cloud.firestore.FirestoreOptions.getDefaultInstance().toBuilder()
-                    .setCredentials(credentials)
-                    .setProjectId(projectId)
-                    .setDatabaseId("CyberSecurity")
-                    .build();
-            return firestoreOptions.getService();
-        } catch (Exception e) {
-            System.err.println("Error initializing Firestore named database 'CyberSecurity': " + e.getMessage());
             return FirestoreClient.getFirestore();
+        } catch (Exception e) {
+            System.err.println("Error initializing Firestore: " + e.getMessage());
+            return null;
         }
     }
 }
