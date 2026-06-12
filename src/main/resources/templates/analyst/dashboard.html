@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Analyst Portal')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3" style="border-bottom: 1px solid var(--border-glass) !important;">
+        <div>
+            <span class="badge badge-purple mb-2 px-3 py-1.5 text-uppercase fw-bold"><i class="fa-solid fa-user-shield me-1"></i> Security Center</span>
+            <h1 class="text-white font-heading mb-0">Analyst Investigation Portal</h1>
+            <p class="text-secondary mb-0">Triage reports, review uploaded evidence, and coordinate threat mitigations.</p>
+        </div>
+        <div class="text-end d-none d-md-block">
+            <span class="text-secondary">Logged in as: <strong class="text-white" sec:authentication="name">analyst</strong></span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Critical & High Alerts Summary Column -->
+        <div class="col-lg-4">
+            <div class="glass-card p-4 h-100" style="border-color: rgba(239, 68, 68, 0.25);">
+                <h5 class="text-white font-heading mb-3" style="color: var(--color-critical);"><i class="fa-solid fa-triangle-exclamation me-1"></i> High Severity Dispatch</h5>
+                <p class="text-secondary" style="font-size: 0.85rem;">Review the following cases categorized as Critical or High Risk immediately:</p>
+                
+                <div class="alert-list" style="max-height: 500px; overflow-y: auto;">
+                    <div th:if="${#lists.isEmpty(highSeverityReports)}" class="text-secondary text-center py-4">
+                        <i class="fa-solid fa-circle-check fs-2 text-success mb-2"></i>
+                        <p class="mb-0" style="font-size: 0.85rem;">All high severity cases resolved.</p>
+                    </div>
+                    
+                    <div th:each="high : ${highSeverityReports}" class="p-3 rounded mb-3" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.25);">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong class="text-white" th:text="${high.reportId}">CYB-2026-1001</strong>
+                            <span class="badge badge-critical" th:text="${high.severity}">CRITICAL</span>
+                        </div>
+                        <h6 class="text-white font-heading" th:text="${high.title}">Fake Banking Link</h6>
+                        <p class="text-secondary mb-2" style="font-size: 0.8rem;" th:text="${#strings.abbreviate(high.description, 80)}">Description...</p>
+                        <button class="btn btn-sm btn-cyber-purple w-100" th:onclick="'openUpdateModal(\'' + ${high.reportId} + '\', \'' + ${high.status} + '\', \'' + ${high.analystNotes} + '\')'">
+                            <i class="fa-solid fa-magnifying-glass me-1"></i>Investigate Case
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- All Reports List -->
+        <div class="col-lg-8">
+            <div class="glass-card p-4">
+                <h5 class="text-white font-heading mb-3"><i class="fa-solid fa-list-check text-cyan me-1"></i> Active Incident Backlog</h5>
+                <div class="table-responsive">
+                    <table class="table table-cyber align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Incident Info</th>
+                                <th>Evidence</th>
+                                <th>Risk Score</th>
+                                <th>Severity</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(reports)}">
+                                <td colspan="7" class="text-center py-5 text-secondary">No reports in system yet.</td>
+                            </tr>
+                            <tr th:each="r : ${reports}">
+                                <td class="fw-bold text-white" th:text="${r.reportId}">CYB-2026-1001</td>
+                                <td>
+                                    <strong class="text-white" th:text="${r.title}">Title</strong><br>
+                                    <span class="text-secondary" style="font-size: 0.75rem;" th:text="${r.threatType}">Type</span>
+                                </td>
+                                <td>
+                                    <a th:if="${r.evidencePath}" th:href="${r.evidencePath}" target="_blank" class="text-cyan text-decoration-none" style="font-size: 0.85rem;">
+                                        <i class="fa-solid fa-paperclip me-1"></i>View File
+                                    </a>
+                                    <span th:if="${!r.evidencePath}" class="text-secondary" style="font-size: 0.85rem;">None</span>
+                                </td>
+                                <td th:text="${r.riskScore} + '/100'">25/100</td>
+                                <td>
+                                    <span th:class="'badge ' + 
+                                                  (${r.severity == 'CRITICAL'} ? 'badge-critical' : 
+                                                  (${r.severity == 'HIGH'} ? 'badge-high' : 
+                                                  (${r.severity == 'MEDIUM'} ? 'badge-medium' : 'badge-safe')))"
+                                          th:text="${r.severity}">HIGH</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary text-uppercase" th:text="${r.status}">SUBMITTED</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-cyber" th:onclick="'openUpdateModal(\'' + ${r.reportId} + '\', \'' + ${r.status} + '\', \'' + ${r.analystNotes} + '\')'">
+                                        <i class="fa-solid fa-edit me-1"></i>Update
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Investigation Update Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog">
+        <div class="modal-content glass-card" style="background: #0f172a; border-radius: 12px;">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title text-white font-heading" id="updateModalLabel"><i class="fa-solid fa-edit text-cyan me-1"></i> Update Case Investigation</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/analyst/update-status}" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="reportId" id="modalReportId">
+                    
+                    <div class="mb-3 text-cyan">
+                        <strong>Updating Case File:</strong> <span class="text-white fw-bold" id="modalReportIdDisplay">CYB-2026-1001</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="modalStatus" class="form-label form-label-cyber">Investigation Status</label>
+                        <select name="status" id="modalStatus" class="form-select form-control-cyber" required>
+                            <option value="SUBMITTED">SUBMITTED</option>
+                            <option value="UNDER_REVIEW">UNDER_REVIEW</option>
+                            <option value="INVESTIGATING">INVESTIGATING</option>
+                            <option value="RESOLVED">RESOLVED</option>
+                            <option value="CLOSED">CLOSED</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="modalNotes" class="form-label form-label-cyber">Analyst Investigation Notes</label>
+                        <textarea name="notes" id="modalNotes" rows="4" class="form-control form-control-cyber" required placeholder="Detail verified domain records, blacklist additions, or server actions..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0 d-flex gap-2">
+                    <button type="button" class="btn btn-outline-cyber" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-cyber-cyan">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<script>
+    var updateModal;
+    document.addEventListener("DOMContentLoaded", function () {
+        updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
+    });
+
+    function openUpdateModal(reportId, currentStatus, currentNotes) {
+        document.getElementById('modalReportId').value = reportId;
+        document.getElementById('modalReportIdDisplay').innerText = reportId;
+        document.getElementById('modalStatus').value = currentStatus;
+        document.getElementById('modalNotes').value = currentNotes === 'null' ? '' : currentNotes;
+        updateModal.show();
+    }
+</script>
+
+</body>
+</html>

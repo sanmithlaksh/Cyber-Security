@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Email Phishing Detector')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <span class="badge badge-medium mb-3 px-3 py-2 text-uppercase fw-bold"><i class="fa-solid fa-envelope-open-text me-1"></i> Phishing Scanner</span>
+        <h1 class="display-5 font-heading text-white mb-2">Email Phishing Detector</h1>
+        <p class="text-secondary col-md-8 mx-auto">Paste suspicious email contents to analyze them for urgent calls-to-action, financial coercion keywords, and credential verification links.</p>
+    </div>
+
+    <!-- Scan Form -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8">
+            <div class="glass-card p-4">
+                <form th:action="@{/phishing-detector}" method="POST">
+                    <div class="mb-3">
+                        <label for="content" class="form-label form-label-cyber">Paste Email Body Content</label>
+                        <textarea class="form-control form-control-cyber" id="content" name="content" rows="8" required placeholder="Dear Customer, your bank account has been suspended due to unauthorized access attempts. Click here to verify your details immediately to avoid permanent closure..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-cyber-cyan w-100 py-2.5"><i class="fa-solid fa-microscope me-2"></i>Analyze Email Text</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scan Results -->
+    <div class="row justify-content-center" th:if="${scanResult}">
+        <div class="col-md-8">
+            <div class="glass-card p-5">
+                <div class="text-center mb-4 border-bottom pb-4" style="border-bottom: 1px solid var(--border-glass) !important;">
+                    <h3 class="text-white font-heading mb-1"><i class="fa-solid fa-chart-line text-cyan me-2"></i>Analysis Report</h3>
+                    <p class="text-secondary">Text Assessment Status: Complete</p>
+                </div>
+
+                <div class="row align-items-center mb-4">
+                    <!-- Progress Bar/Indicator -->
+                    <div class="col-md-6 text-center border-end" style="border-right: 1px solid var(--border-glass) !important;">
+                        <h5 class="text-secondary font-heading mb-3">Phishing Probability</h5>
+                        
+                        <span th:class="'badge px-4 py-3 fs-5 mb-3 text-uppercase ' + 
+                                      (${scanResult.riskLevel == 'DANGEROUS'} ? 'badge-critical' : 
+                                      (${scanResult.riskLevel == 'MODERATE RISK'} ? 'badge-medium' : 'badge-safe'))"
+                              th:text="${scanResult.riskLevel}">DANGEROUS</span>
+
+                        <div class="mt-2 text-secondary" style="font-size: 0.9rem;">
+                            Match Probability: <strong class="text-white" th:text="${scanResult.score} + '%'">85%</strong>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 ps-md-4 mt-3 mt-md-0">
+                        <h5 class="text-white font-heading mb-2">Probability Gauge</h5>
+                        <div class="progress" style="background: rgba(255,255,255,0.05); height: 16px; border-radius: 8px;">
+                            <div th:class="'progress-bar ' + 
+                                            (${scanResult.riskLevel == 'DANGEROUS'} ? 'bg-danger' : 
+                                            (${scanResult.riskLevel == 'MODERATE RISK'} ? 'bg-warning' : 'bg-success'))"
+                                 role="progressbar" 
+                                 th:style="'width: ' + ${scanResult.score} + '%; border-radius: 8px;'"
+                                 th:aria-valuenow="${scanResult.score}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100"></div>
+                        </div>
+                        <p class="text-secondary mt-3 mb-0" style="font-size: 0.85rem;">
+                            High probability scores (above 65%) indicate text content matches standard templates used in active phishing, bank spoofing, and credentials harvesting campaigns.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass);">
+                    <h5 class="text-white font-heading mb-3"><i class="fa-solid fa-magnifying-glass-chart text-cyan me-1"></i> Trigger Indicator Analysis</h5>
+                    <pre class="text-secondary mb-0" style="font-family: 'Inter', sans-serif; white-space: pre-wrap;" th:text="${scanResult.recommendations}">- Recommendations go here.</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>

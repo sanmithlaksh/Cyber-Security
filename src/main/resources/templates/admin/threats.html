@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Manage Threat DB')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container py-5">
+    <div class="mb-4">
+        <a th:href="@{/dashboard}" class="text-secondary text-decoration-none"><i class="fa-solid fa-arrow-left me-1"></i> Back to Control Panel</a>
+    </div>
+
+    <div class="text-center mb-5">
+        <span class="badge badge-medium mb-3 px-3 py-2 text-uppercase fw-bold"><i class="fa-solid fa-database me-1"></i> Admin Console</span>
+        <h1 class="display-5 font-heading text-white mb-2">Threat Intelligence Database Settings</h1>
+        <p class="text-secondary col-md-8 mx-auto">Add new threat signatures, edit prevention methods, and review public-facing cyber intelligence articles.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Add Threat Form -->
+        <div class="col-lg-5">
+            <div class="glass-card p-4">
+                <h5 class="text-white font-heading mb-4"><i class="fa-solid fa-folder-plus text-cyan me-1"></i> Register New Threat Profile</h5>
+                <form th:action="@{/admin/threats/add}" method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label form-label-cyber">Threat Name</label>
+                        <input type="text" name="name" id="name" class="form-control form-control-cyber" required placeholder="e.g., WhatsApp OTP Scam">
+                    </div>
+                    
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="category" class="form-label form-label-cyber">Category</label>
+                            <input type="text" name="category" id="category" class="form-control form-control-cyber" required placeholder="e.g., Phishing">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="riskLevel" class="form-label form-label-cyber">Risk Level</label>
+                            <select name="riskLevel" id="riskLevel" class="form-select form-control-cyber" required>
+                                <option value="SAFE">SAFE</option>
+                                <option value="MEDIUM" selected>MEDIUM</option>
+                                <option value="HIGH">HIGH</option>
+                                <option value="CRITICAL">CRITICAL</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label form-label-cyber">Threat Description</label>
+                        <textarea name="description" id="description" rows="3" class="form-control form-control-cyber" required placeholder="Describe how this cyber threat is coordinated..."></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="preventionMethods" class="form-label form-label-cyber">Prevention & Safety Steps</label>
+                        <textarea name="preventionMethods" id="preventionMethods" rows="3" class="form-control form-control-cyber" required placeholder="Outline clear security steps to bypass this fraud..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-cyber-cyan w-100 py-2.5"><i class="fa-solid fa-save me-2"></i>Save Threat Entry</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Threat DB List -->
+        <div class="col-lg-7">
+            <div class="glass-card p-4">
+                <h5 class="text-white font-heading mb-4"><i class="fa-solid fa-table-list text-cyan me-1"></i> Configured Threat Intelligence Items</h5>
+                
+                <div class="table-responsive" style="max-height: 520px; overflow-y: auto;">
+                    <table class="table table-cyber align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Risk Level</th>
+                                <th>Date Added</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="t : ${threats}">
+                                <td>
+                                    <strong class="text-white" th:text="${t.name}">Worm Spread</strong>
+                                </td>
+                                <td th:text="${t.category}">Malware</td>
+                                <td>
+                                    <span th:class="'badge ' + 
+                                                  (${t.riskLevel == 'CRITICAL'} ? 'badge-critical' : 
+                                                  (${t.riskLevel == 'HIGH'} ? 'badge-high' : 
+                                                  (${t.riskLevel == 'MEDIUM'} ? 'badge-medium' : 'badge-safe')))"
+                                          th:text="${t.riskLevel}">CRITICAL</span>
+                                </td>
+                                <td th:text="${t.dateAdded}">2026-06-12</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>

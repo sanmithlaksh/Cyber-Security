@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Quiz Results')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            
+            <div class="glass-card p-5 text-center">
+                <div class="mb-4">
+                    <!-- Passed Icon -->
+                    <div th:if="${passed}" class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: rgba(34, 197, 94, 0.1) !important; border: 3px solid var(--color-safe);">
+                        <i class="fa-solid fa-award text-success fs-1" style="color: var(--color-safe); filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));"></i>
+                    </div>
+                    <!-- Failed Icon -->
+                    <div th:if="${!passed}" class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1) !important; border: 3px solid var(--color-critical);">
+                        <i class="fa-solid fa-rotate-left text-danger fs-1" style="color: var(--color-critical); filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.5));"></i>
+                    </div>
+                </div>
+
+                <h2 class="text-white font-heading mb-1" th:text="${passed} ? 'Assessment Passed!' : 'Assessment Failed'">Assessment Status</h2>
+                <p class="text-secondary" th:text="'Subject Topic: ' + ${category} + ' Security'"></p>
+
+                <!-- Score Meter -->
+                <div class="my-5">
+                    <div class="display-3 font-heading fw-bold" th:classappend="${passed} ? 'text-success' : 'text-danger'" th:text="${score} + '%'">80%</div>
+                    <div class="text-secondary mt-1">
+                        You answered <strong class="text-white" th:text="${correctCount}">8</strong> out of <strong class="text-white" th:text="${totalCount}">10</strong> questions correctly.
+                    </div>
+                </div>
+
+                <!-- Passed Details and Certificate Download -->
+                <div th:if="${passed}" class="p-4 rounded mb-4 text-start" style="background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.25);">
+                    <h5 class="text-white font-heading mb-2"><i class="fa-solid fa-ribbon text-success me-1"></i> Cyber Awareness Certificate Unlocked</h5>
+                    <p class="text-secondary mb-3" style="font-size: 0.9rem;">
+                        Congratulations! You have demonstrated excellent safety awareness. Your digital certificate has been compiled and is ready for download.
+                    </p>
+                    <a th:href="@{/quiz/certificate/{uuid}(uuid=${certUuid})}" class="btn btn-cyber-cyan w-100 py-2.5"><i class="fa-solid fa-file-pdf me-2"></i>Download Digital Certificate (PDF)</a>
+                </div>
+
+                <!-- Failed Details and Retry -->
+                <div th:if="${!passed}" class="p-4 rounded mb-4 text-start" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.25);">
+                    <h5 class="text-white font-heading mb-2"><i class="fa-solid fa-circle-exclamation text-danger me-1"></i> Score Below Threshold</h5>
+                    <p class="text-secondary mb-3" style="font-size: 0.9rem;">
+                        You scored less than the required 80% passing grade. Review the prevention tips inside the Threat Intelligence Database and attempt the quiz again.
+                    </p>
+                    <a th:href="@{/quiz/{cat}(cat=${category})}" class="btn btn-cyber-purple w-100 py-2.5"><i class="fa-solid fa-rotate-left me-2"></i>Attempt Quiz Again</a>
+                </div>
+
+                <!-- Back Navigation -->
+                <div class="d-flex gap-2 justify-content-center">
+                    <a th:href="@{/quiz}" class="btn btn-outline-cyber px-4 py-2">All Quiz Topics</a>
+                    <a th:href="@{/dashboard}" class="btn btn-outline-cyber px-4 py-2">Go to Dashboard</a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>

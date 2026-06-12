@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Simulation Lab')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container py-5">
+    
+    <div class="mb-4">
+        <a th:href="@{/dashboard}" class="text-secondary text-decoration-none"><i class="fa-solid fa-arrow-left me-1"></i> Back to Control Panel</a>
+    </div>
+
+    <div class="text-center mb-5">
+        <span class="badge badge-purple mb-3 px-3 py-2 text-uppercase fw-bold"><i class="fa-solid fa-network-wired me-1"></i> Flagship Lab</span>
+        <h1 class="display-5 font-heading text-white mb-2">Cyber Attack Simulation Lab</h1>
+        <p class="text-secondary col-md-8 mx-auto">Model malware outbreaks, ransomware propagation, and network intrusions. Calculate the quickest propagation route utilizing Dijkstra's Algorithm and visualize defenses.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Interactive Canvas Topology -->
+        <div class="col-lg-8">
+            <div class="glass-card p-4">
+                <h5 class="text-white font-heading mb-3"><i class="fa-solid fa-diagram-project text-cyan me-1"></i> Network Topology Map</h5>
+                
+                <div class="network-container position-relative">
+                    <!-- SVG lines for connections -->
+                    <svg style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1;">
+                        <!-- Defs for markers/effects -->
+                        <defs>
+                            <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur stdDeviation="3" result="blur" />
+                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            </filter>
+                        </defs>
+                        <!-- A - B (2) -->
+                        <line id="edge-A-B" x1="15%" y1="50%" x2="40%" y2="25%" stroke="#334155" stroke-width="2" />
+                        <!-- A - C (5) -->
+                        <line id="edge-A-C" x1="15%" y1="50%" x2="40%" y2="75%" stroke="#334155" stroke-width="2" />
+                        <!-- B - C (2) -->
+                        <line id="edge-B-C" x1="40%" y1="25%" x2="40%" y2="75%" stroke="#334155" stroke-width="2" />
+                        <!-- B - D (1) -->
+                        <line id="edge-B-D" x1="40%" y1="25%" x2="70%" y2="50%" stroke="#334155" stroke-width="2" />
+                        <!-- C - D (4) -->
+                        <line id="edge-C-D" x1="40%" y1="75%" x2="70%" y2="50%" stroke="#334155" stroke-width="2" />
+                        <!-- C - E (6) -->
+                        <line id="edge-C-E" x1="40%" y1="75%" x2="90%" y2="50%" stroke="#334155" stroke-width="2" />
+                        <!-- D - E (3) -->
+                        <line id="edge-D-E" x1="70%" y1="50%" x2="90%" y2="50%" stroke="#334155" stroke-width="2" />
+                    </svg>
+
+                    <!-- Cost Text Labels on Edges -->
+                    <div style="position: absolute; left: 27%; top: 34%; z-index: 5;" class="badge bg-secondary text-white border-0 py-0.5 px-1.5" id="label-A-B">Cost: 2</div>
+                    <div style="position: absolute; left: 27%; top: 64%; z-index: 5;" class="badge bg-secondary text-white border-0 py-0.5 px-1.5" id="label-A-C">Cost: 5</div>
+                    <div style="position: absolute; left: 37%; top: 48%; z-index: 5;" class="badge bg-secondary text-white border-0 py-0.5 px-1.5" id="label-B-C">Cost: 2</div>
+                    <div style="position: absolute; left: 55%; top: 34%; z-index: 5;" class="badge bg-secondary text-white border-0 py-0.5 px-1.5" id="label-B-D">Cost: 1</div>
+                    <div style="position: absolute; left: 55%; top: 64%; z-index: 5;" class="badge bg-secondary text-white border-0 py-0.5 px-1.5" id="label-C-D">Cost: 4</div>
+                    <div style="position: absolute; left: 80%; top: 46%; z-index: 5;" class="badge bg-secondary text-white border-0 py-0.5 px-1.5" id="label-D-E">Cost: 3</div>
+                    <div style="position: absolute; left: 63%; top: 73%; z-index: 5;" class="badge bg-secondary text-white border-0 py-0.5 px-1.5" id="label-C-E">Cost: 6</div>
+
+                    <!-- Nodes cards -->
+                    <!-- Node A -->
+                    <div class="network-node" id="node-A" style="left: 10%; top: 42%;">
+                        A
+                        <div class="position-absolute" style="font-size: 0.65rem; top: 62px; color: var(--text-secondary); width: 80px; text-align: center;">Entry Point</div>
+                    </div>
+                    <!-- Node B -->
+                    <div class="network-node" id="node-B" style="left: 35%; top: 17%;">
+                        B
+                        <div class="position-absolute" style="font-size: 0.65rem; top: 62px; color: var(--text-secondary); width: 80px; text-align: center;">Firewall</div>
+                    </div>
+                    <!-- Node C -->
+                    <div class="network-node" id="node-C" style="left: 35%; top: 67%;">
+                        C
+                        <div class="position-absolute" style="font-size: 0.65rem; top: 62px; color: var(--text-secondary); width: 80px; text-align: center;">Database</div>
+                    </div>
+                    <!-- Node D -->
+                    <div class="network-node" id="node-D" style="left: 65%; top: 42%;">
+                        D
+                        <div class="position-absolute" style="font-size: 0.65rem; top: 62px; color: var(--text-secondary); width: 80px; text-align: center;">App Server</div>
+                    </div>
+                    <!-- Node E -->
+                    <div class="network-node" id="node-E" style="left: 85%; top: 42%;">
+                        E
+                        <div class="position-absolute" style="font-size: 0.65rem; top: 62px; color: var(--text-secondary); width: 80px; text-align: center;">Admin PC</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulation Controllers -->
+        <div class="col-lg-4">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <h5 class="text-white font-heading mb-3"><i class="fa-solid fa-gamepad text-purple me-1"></i> Control Desk</h5>
+                    
+                    <div class="mb-3">
+                        <label for="attackType" class="form-label form-label-cyber">Simulation Incident Vector</label>
+                        <select class="form-select form-control-cyber" id="attackType">
+                            <option value="Phishing Attack">Phishing Spear Attack</option>
+                            <option value="Malware Spread" selected>Worm Propagation</option>
+                            <option value="Ransomware Outbreak">Ransomware Outbreak</option>
+                            <option value="Network Intrusion">Network Intrusion</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="startNode" class="form-label form-label-cyber">Source (Attacker Node)</label>
+                        <select class="form-select form-control-cyber" id="startNode">
+                            <option value="Node A" selected>Node A (Entry Point)</option>
+                            <option value="Node B">Node B (Firewall)</option>
+                            <option value="Node C">Node C (Database)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="endNode" class="form-label form-label-cyber">Target Node</label>
+                        <select class="form-select form-control-cyber" id="endNode">
+                            <option value="Node E" selected>Node E (Admin PC)</option>
+                            <option value="Node D">Node D (App Server)</option>
+                            <option value="Node C">Node C (Database)</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-2 mb-4">
+                        <button class="btn btn-cyber-purple py-2.5" onclick="calculatePath()"><i class="fa-solid fa-calculator me-1"></i> Compute Shortest Route</button>
+                        <button class="btn btn-cyber-cyan py-2.5" onclick="startOutbreakAnimation()"><i class="fa-solid fa-play me-1"></i> Execute Simulation</button>
+                        <button class="btn btn-outline-cyber py-2" onclick="resetLab()"><i class="fa-solid fa-arrow-rotate-left me-1"></i> Reset Topology</button>
+                    </div>
+                </div>
+
+                <!-- Simulation Output Statuses -->
+                <div class="p-3 rounded text-secondary" style="background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.25); font-size: 0.85rem;" id="simulation-output">
+                    <h6 class="text-white font-heading mb-2"><i class="fa-solid fa-square-rss me-1"></i> Simulation Console</h6>
+                    <p class="mb-1"><strong>Status:</strong> <span class="text-white" id="console-status">IDLE</span></p>
+                    <p class="mb-1"><strong>Shortest Path:</strong> <span class="text-cyan fw-bold" id="console-path">N/A</span></p>
+                    <p class="mb-1"><strong>Total Weight Cost:</strong> <span class="text-white" id="console-cost">N/A</span></p>
+                    <p class="mb-0"><strong>Estimated Recovery:</strong> <span class="text-white" id="console-recovery">N/A</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<script>
+    var currentPath = [];
+    var totalCost = 0;
+
+    function resetLab() {
+        // Clear nodes infected styling
+        document.querySelectorAll(".network-node").forEach(node => {
+            node.classList.remove("infected");
+            node.classList.remove("path-highlight");
+        });
+
+        // Clear SVG lines
+        document.querySelectorAll("svg line").forEach(line => {
+            line.setAttribute("stroke", "#334155");
+            line.setAttribute("stroke-width", "2");
+            line.style.filter = "none";
+        });
+
+        document.getElementById("console-status").innerText = "IDLE";
+        document.getElementById("console-path").innerText = "N/A";
+        document.getElementById("console-cost").innerText = "N/A";
+        document.getElementById("console-recovery").innerText = "N/A";
+        currentPath = [];
+        totalCost = 0;
+    }
+
+    function calculatePath() {
+        resetLab();
+        var start = document.getElementById("startNode").value;
+        var end = document.getElementById("endNode").value;
+
+        document.getElementById("console-status").innerText = "CALCULATING DIJKSTRA PATH...";
+
+        // Fire AJAX Request
+        fetch('/api/simulation/dijkstra', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ startNode: start, endNode: end })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.path && data.path.length > 0) {
+                currentPath = data.path;
+                totalCost = data.totalWeight;
+
+                // Display cost metrics on console
+                var readablePath = currentPath.map(n => n.replace("Node ", "")).join(" ➔ ");
+                document.getElementById("console-path").innerText = readablePath;
+                document.getElementById("console-cost").innerText = totalCost + " units";
+                document.getElementById("console-status").innerText = "PATH RESOLVED. READY FOR OUTBREAK EXECUTION.";
+                
+                // Color path nodes
+                currentPath.forEach(nodeId => {
+                    var cleanId = nodeId.replace("Node ", "node-");
+                    var nodeEl = document.getElementById(cleanId);
+                    if (nodeEl) {
+                        nodeEl.classList.add("path-highlight");
+                    }
+                });
+
+                // Highlight SVG lines in path
+                for (var i = 0; i < currentPath.length - 1; i++) {
+                    var node1 = currentPath[i].replace("Node ", "");
+                    var node2 = currentPath[i+1].replace("Node ", "");
+                    highlightEdge(node1, node2);
+                }
+            } else {
+                document.getElementById("console-status").innerText = "ERROR: NO ROUTE FOUND.";
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById("console-status").innerText = "CONNECTION TIMEOUT.";
+        });
+    }
+
+    function highlightEdge(node1, node2) {
+        // Find line ID: lines are unordered A-B, B-D etc.
+        var lineId1 = "edge-" + node1 + "-" + node2;
+        var lineId2 = "edge-" + node2 + "-" + node1;
+        var lineEl = document.getElementById(lineId1) || document.getElementById(lineId2);
+        
+        if (lineEl) {
+            lineEl.setAttribute("stroke", "#06b6d4"); // cyan
+            lineEl.setAttribute("stroke-width", "4");
+            lineEl.style.filter = "url(#glow-cyan)";
+        }
+    }
+
+    function startOutbreakAnimation() {
+        if (currentPath.length === 0) {
+            alert("Please calculate the Dijkstra path first before running the simulation!");
+            return;
+        }
+
+        var attack = document.getElementById("attackType").value;
+        document.getElementById("console-status").innerText = "PROPAGATING ATTACK [" + attack.toUpperCase() + "]...";
+
+        // Reset infection statuses first
+        document.querySelectorAll(".network-node").forEach(node => {
+            node.classList.remove("infected");
+        });
+
+        var delay = 1000;
+        currentPath.forEach((nodeName, index) => {
+            setTimeout(() => {
+                var cleanId = nodeName.replace("Node ", "node-");
+                var nodeEl = document.getElementById(cleanId);
+                if (nodeEl) {
+                    nodeEl.classList.add("infected");
+                }
+
+                // Update console status step
+                var progress = currentPath.slice(0, index + 1).map(n => n.replace("Node ", "")).join(" ➔ ");
+                document.getElementById("console-status").innerText = "COMPROMISED NODES: " + progress;
+
+                // When last node is infected, end simulation
+                if (index === currentPath.length - 1) {
+                    var recoverySeconds = currentPath.length * 10;
+                    document.getElementById("console-status").innerText = "ATTACK COMPLETED. TARGET COMPROMISED!";
+                    document.getElementById("console-recovery").innerText = recoverySeconds + " Seconds (Est. Recovery)";
+                }
+            }, index * delay);
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('User Dashboard')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        
+        <!-- User Sidebar Info & Navigation -->
+        <div class="col-lg-4">
+            <!-- Profile Info -->
+            <div class="glass-card p-4 mb-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background: rgba(6,182,212,0.1) !important; border: 2px solid var(--neon-cyan);">
+                        <i class="fa-solid fa-user text-cyan fs-3" style="color: var(--neon-cyan);"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-heading mb-0" th:text="${user.name}">John Doe</h4>
+                        <span class="badge badge-safe text-uppercase" style="font-size: 0.75rem;">Registered Citizen</span>
+                    </div>
+                </div>
+                <div class="text-secondary" style="font-size: 0.9rem;">
+                    <p class="mb-1"><i class="fa-solid fa-envelope me-2"></i><span th:text="${user.email}">john@doe.com</span></p>
+                    <p class="mb-0"><i class="fa-solid fa-phone me-2"></i><span th:text="${user.phone}">+1234567890</span></p>
+                </div>
+            </div>
+
+            <!-- Quick Navigation Panels -->
+            <div class="glass-card p-4 mb-4">
+                <h5 class="text-white font-heading mb-3"><i class="fa-solid fa-layer-group text-cyan me-1"></i> Quick Portals</h5>
+                <div class="d-grid gap-2">
+                    <a th:href="@{/reports/new}" class="btn btn-cyber-cyan text-start"><i class="fa-solid fa-bullhorn me-2"></i>Submit Threat Report</a>
+                    <a th:href="@{/reports/track}" class="btn btn-outline-cyber text-start"><i class="fa-solid fa-map-location-dot me-2"></i>Track Submitted Incident</a>
+                    <a th:href="@{/quiz}" class="btn btn-cyber-purple text-start"><i class="fa-solid fa-graduation-cap me-2"></i>Security Awareness Quiz</a>
+                </div>
+            </div>
+
+            <!-- Notifications Center -->
+            <div class="glass-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-white font-heading mb-0"><i class="fa-solid fa-bell text-purple me-1" style="color: var(--neon-purple);"></i> Notification Alerts</h5>
+                    <button class="btn btn-sm btn-outline-cyber border-0 p-1 px-2 text-secondary" onclick="markAllNotificationsRead()">
+                        Mark read
+                    </button>
+                </div>
+                <div id="dashboard-notifications-container" style="max-height: 250px; overflow-y: auto;">
+                    <div th:if="${#lists.isEmpty(notifications)}" class="text-secondary text-center py-4">
+                        <i class="fa-solid fa-bell-slash fs-2 mb-2 opacity-50"></i>
+                        <p class="mb-0" style="font-size: 0.85rem;">No recent notifications.</p>
+                    </div>
+                    <div th:each="notif : ${notifications}" class="p-2 mb-2 rounded" 
+                         th:style="'border: 1px solid var(--border-glass); ' + (${notif.readStatus} ? 'opacity: 0.6; background: transparent;' : 'background: rgba(6,182,212,0.04);')">
+                        <p class="mb-1 text-white" style="font-size: 0.85rem;" th:text="${notif.message}">Notification message</p>
+                        <span class="text-secondary" style="font-size: 0.7rem;" th:text="${#temporals.format(notif.dateCreated, 'yyyy-MM-dd HH:mm')}">Time</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submitted Incident Reports List -->
+        <div class="col-lg-8">
+            <div class="glass-card p-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 border-bottom pb-3" style="border-bottom: 1px solid var(--border-glass) !important;">
+                    <div>
+                        <h3 class="text-white font-heading mb-0">Your Submitted Incident Reports</h3>
+                        <p class="text-secondary mb-0">List of cyber threats you reported to the CyberShield center</p>
+                    </div>
+                    <a th:href="@{/reports/new}" class="btn btn-sm btn-cyber-cyan"><i class="fa-solid fa-plus me-1"></i>New Report</a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-cyber align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Risk Score</th>
+                                <th>Severity</th>
+                                <th>Status</th>
+                                <th>Tracking</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(reports)}">
+                                <td colspan="7" class="text-center py-5 text-secondary">
+                                    <i class="fa-solid fa-folder-open fs-1 mb-2 opacity-50"></i>
+                                    <p class="mb-0">You have not submitted any cyber threat reports yet.</p>
+                                </td>
+                            </tr>
+                            <tr th:each="report : ${reports}">
+                                <td class="fw-bold text-white" th:text="${report.reportId}">CYB-2026-1001</td>
+                                <td th:text="${report.title}">Fake Banking Link</td>
+                                <td th:text="${report.threatType}">Phishing</td>
+                                <td th:text="${report.riskScore} + '/100'">35/100</td>
+                                <td>
+                                    <span th:class="'badge ' + 
+                                                  (${report.severity == 'CRITICAL'} ? 'badge-critical' : 
+                                                  (${report.severity == 'HIGH'} ? 'badge-high' : 
+                                                  (${report.severity == 'MEDIUM'} ? 'badge-medium' : 'badge-safe')))"
+                                          th:text="${report.severity}">HIGH</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary text-uppercase" th:text="${report.status}">SUBMITTED</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/reports/track/{id}(id=${report.reportId})}" class="btn btn-sm btn-outline-cyber">
+                                        <i class="fa-solid fa-route me-1"></i>Track
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<script>
+    function markAllNotificationsRead() {
+        fetch('/api/notifications/read', {
+            method: 'POST'
+        })
+        .then(response => response.text())
+        .then(result => {
+            if (result === 'SUCCESS') {
+                // Dim notifications opacity on screen
+                const elements = document.querySelectorAll('#dashboard-notifications-container > div');
+                elements.forEach(el => {
+                    el.style.opacity = '0.6';
+                    el.style.background = 'transparent';
+                });
+                console.log("Notifications marked read successfully.");
+            }
+        })
+        .catch(err => console.error("Error reading notifications: " + err));
+    }
+</script>
+
+</body>
+</html>

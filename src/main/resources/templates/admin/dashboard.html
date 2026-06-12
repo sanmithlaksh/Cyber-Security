@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin Dashboard')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container py-5">
+    
+    <!-- Admin Header -->
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3" style="border-bottom: 1px solid var(--border-glass) !important;">
+        <div>
+            <span class="badge badge-medium mb-2 px-3 py-1.5 text-uppercase fw-bold"><i class="fa-solid fa-lock-open me-1"></i> Control Panel</span>
+            <h1 class="text-white font-heading mb-0">Administrator Analytics Dashboard</h1>
+            <p class="text-secondary mb-0">Oversee threat trends, manage platform configurations, and export security audits.</p>
+        </div>
+        <div class="text-end d-none d-md-block">
+            <span class="text-secondary">Logged in as: <strong class="text-white" sec:authentication="name">admin</strong></span>
+        </div>
+    </div>
+
+    <!-- Quick Navigation Bar -->
+    <div class="row g-3 mb-5 text-center">
+        <div class="col-md-4">
+            <a th:href="@{/admin/simulation}" class="btn btn-cyber-purple w-100 py-3"><i class="fa-solid fa-network-wired me-2"></i>Cyber Simulation Lab</a>
+        </div>
+        <div class="col-md-4">
+            <a th:href="@{/admin/users}" class="btn btn-outline-cyber w-100 py-3"><i class="fa-solid fa-users me-2"></i>Manage User Accounts</a>
+        </div>
+        <div class="col-md-4">
+            <a th:href="@{/admin/threats}" class="btn btn-outline-cyber w-100 py-3"><i class="fa-solid fa-database me-2"></i>Manage Threat Intelligence</a>
+        </div>
+    </div>
+
+    <!-- Statistics Panel -->
+    <div class="row g-4 mb-5 text-center">
+        <!-- Reports -->
+        <div class="col-md-2.4 col-sm-6 col-lg-3">
+            <div class="glass-card p-3">
+                <div class="stat-number text-cyan" th:text="${reports.size()}">14</div>
+                <div class="stat-label mt-1">Total Reports</div>
+            </div>
+        </div>
+        <!-- Active -->
+        <div class="col-md-2.4 col-sm-6 col-lg-2">
+            <div class="glass-card p-3">
+                <div class="stat-number text-purple" th:text="${activeCount}">4</div>
+                <div class="stat-label mt-1">Active Cases</div>
+            </div>
+        </div>
+        <!-- Resolved -->
+        <div class="col-md-2.4 col-sm-6 col-lg-2">
+            <div class="glass-card p-3">
+                <div class="stat-number text-success" th:text="${resolvedCount}">8</div>
+                <div class="stat-label mt-1">Resolved</div>
+            </div>
+        </div>
+        <!-- Critical -->
+        <div class="col-md-2.4 col-sm-6 col-lg-2">
+            <div class="glass-card p-3">
+                <div class="stat-number text-danger" th:text="${criticalCount}">2</div>
+                <div class="stat-label mt-1">Critical</div>
+            </div>
+        </div>
+        <!-- Users -->
+        <div class="col-md-2.4 col-sm-6 col-lg-3">
+            <div class="glass-card p-3">
+                <div class="stat-number" th:text="${userCount}">12</div>
+                <div class="stat-label mt-1">Users</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <!-- Charts.js Visualizations -->
+        <div class="col-lg-8">
+            <div class="glass-card p-4 h-100">
+                <h5 class="text-white font-heading mb-4"><i class="fa-solid fa-chart-pie text-cyan me-1"></i> Incident Vector Distribution</h5>
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center">
+                        <h6 class="text-secondary mb-2" style="font-size: 0.85rem;">Threat Categories</h6>
+                        <div style="height: 220px; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-center border-start" style="border-left: 1px solid var(--border-glass) !important;">
+                        <h6 class="text-secondary mb-2" style="font-size: 0.85rem;">Case Statuses</h6>
+                        <div style="height: 220px; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PDF / Excel Export Tools -->
+        <div class="col-lg-4">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <h5 class="text-white font-heading mb-3"><i class="fa-solid fa-file-export text-purple me-1" style="color: var(--neon-purple);"></i> Report Generation</h5>
+                    <p class="text-secondary mb-4" style="font-size: 0.85rem;">Compile database records and generate secure report files for compliance audits.</p>
+                </div>
+                <form th:action="@{/admin/reports/export}" method="POST">
+                    <div class="mb-3">
+                        <label for="timeframe" class="form-label form-label-cyber">Timeframe Filter</label>
+                        <select class="form-select form-control-cyber" id="timeframe" name="timeframe" required>
+                            <option value="all">All-Time Cumulative</option>
+                            <option value="daily">Daily Threat Report</option>
+                            <option value="weekly">Weekly Threat Report</option>
+                            <option value="monthly">Monthly Threat Report</option>
+                            <option value="annual">Annual Security Report</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="format" class="form-label form-label-cyber">Export Format</label>
+                        <select class="form-select form-control-cyber" id="format" name="format" required>
+                            <option value="pdf">Adobe PDF (.pdf)</option>
+                            <option value="excel">Microsoft Excel (.xlsx)</option>
+                            <option value="csv">Comma Separated Values (.csv)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-cyber-purple w-100 py-2.5"><i class="fa-solid fa-download me-2"></i>Download Report</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Incident Backlog -->
+    <div class="glass-card p-4">
+        <h5 class="text-white font-heading mb-3"><i class="fa-solid fa-list text-cyan me-1"></i> Cumulative Incident Log</h5>
+        <div class="table-responsive">
+            <table class="table table-cyber align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Report ID</th>
+                        <th>Incident Info</th>
+                        <th>Evidence</th>
+                        <th>Risk Score</th>
+                        <th>Severity</th>
+                        <th>Status</th>
+                        <th>Date Submitted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(reports)}">
+                        <td colspan="7" class="text-center py-5 text-secondary">No incidents logged.</td>
+                    </tr>
+                    <tr th:each="r : ${reports}">
+                        <td class="fw-bold text-white" th:text="${r.reportId}">CYB-2026-1001</td>
+                        <td>
+                            <strong class="text-white" th:text="${r.title}">Title</strong><br>
+                            <span class="text-secondary" style="font-size: 0.75rem;" th:text="${r.threatType}">Type</span>
+                        </td>
+                        <td>
+                            <a th:if="${r.evidencePath}" th:href="${r.evidencePath}" target="_blank" class="text-cyan text-decoration-none" style="font-size: 0.85rem;">
+                                <i class="fa-solid fa-paperclip me-1"></i>View File
+                            </a>
+                            <span th:if="${!r.evidencePath}" class="text-secondary" style="font-size: 0.85rem;">None</span>
+                        </td>
+                        <td th:text="${r.riskScore} + '/100'">25/100</td>
+                        <td>
+                            <span th:class="'badge ' + 
+                                          (${r.severity == 'CRITICAL'} ? 'badge-critical' : 
+                                          (${r.severity == 'HIGH'} ? 'badge-high' : 
+                                          (${r.severity == 'MEDIUM'} ? 'badge-medium' : 'badge-safe')))"
+                                  th:text="${r.severity}">HIGH</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary text-uppercase" th:text="${r.status}">SUBMITTED</span>
+                        </td>
+                        <td th:text="${#temporals.format(r.dateTime, 'yyyy-MM-dd HH:mm')}">Date</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<!-- Chart.js Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // Load data injected from Thymeleaf model
+        var typeKeys = [[${threatTypeKeys}]];
+        var typeValues = [[${threatTypeValues}]];
+        var statusKeys = [[${statusKeys}]];
+        var statusValues = [[${statusValues}]];
+
+        // 1. Category Pie Chart
+        if (typeKeys && typeKeys.length > 0) {
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'pie',
+                data: {
+                    labels: typeKeys,
+                    datasets: [{
+                        data: typeValues,
+                        backgroundColor: [
+                            'rgba(6, 182, 212, 0.65)',  // cyan
+                            'rgba(168, 85, 247, 0.65)', // purple
+                            'rgba(234, 179, 8, 0.65)',   // yellow/amber
+                            'rgba(239, 68, 68, 0.65)',   // red
+                            'rgba(34, 197, 94, 0.65)',   // green
+                            'rgba(249, 115, 22, 0.65)'   // orange
+                        ],
+                        borderColor: 'rgba(15, 23, 42, 0.9)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#94a3b8', boxWidth: 12, font: { size: 10 } },
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // 2. Status Doughnut Chart
+        if (statusKeys && statusKeys.length > 0) {
+            new Chart(document.getElementById('statusChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: statusKeys,
+                    datasets: [{
+                        data: statusValues,
+                        backgroundColor: [
+                            'rgba(148, 163, 184, 0.65)', // slate/gray
+                            'rgba(6, 182, 212, 0.65)',   // cyan
+                            'rgba(168, 85, 247, 0.65)',  // purple
+                            'rgba(34, 197, 94, 0.65)',   // green
+                            'rgba(239, 68, 68, 0.65)'    // red
+                        ],
+                        borderColor: 'rgba(15, 23, 42, 0.9)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#94a3b8', boxWidth: 12, font: { size: 10 } },
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Report Threat')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="mb-4">
+                <a th:href="@{/dashboard}" class="text-secondary text-decoration-none"><i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard</a>
+            </div>
+
+            <!-- Error Message Alert -->
+            <div th:if="${errorMessage}" class="alert alert-danger border-0 mb-4" style="background: rgba(239, 68, 68, 0.15); color: var(--color-critical); border-radius: 8px;">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                <span th:text="${errorMessage}">Error Message</span>
+            </div>
+
+            <div class="glass-card p-5">
+                <div class="mb-4 border-bottom pb-3" style="border-bottom: 1px solid var(--border-glass) !important;">
+                    <span class="badge badge-critical mb-2 px-3 py-1.5 text-uppercase fw-bold"><i class="fa-solid fa-bullhorn me-1"></i> Reporting Center</span>
+                    <h2 class="text-white font-heading mb-1">Submit Cyber Threat Report</h2>
+                    <p class="text-secondary mb-0">Provide detailed indicators of the phishing URL, scam template, or fraud attempt.</p>
+                </div>
+
+                <form th:action="@{/reports/new}" method="POST" enctype="multipart/form-data">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="title" class="form-label form-label-cyber">Incident Title</label>
+                            <input type="text" class="form-control form-control-cyber" id="title" name="title" required placeholder="e.g., WhatsApp OTP Lottery Fraud or Spoofed Bank Page">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="threatType" class="form-label form-label-cyber">Threat Category</label>
+                            <select class="form-select form-control-cyber" id="threatType" name="threatType" required>
+                                <option value="" disabled selected>Select category...</option>
+                                <option value="Phishing Emails">Phishing Emails</option>
+                                <option value="Scam Websites">Scam Websites</option>
+                                <option value="Identity Theft">Identity Theft</option>
+                                <option value="Malware Attacks">Malware Attacks</option>
+                                <option value="Ransomware">Ransomware</option>
+                                <option value="Social Media Fraud">Social Media Fraud</option>
+                                <option value="Online Shopping Fraud">Online Shopping Fraud</option>
+                                <option value="UPI Scams">UPI Scams</option>
+                                <option value="Fake Job Offers">Fake Job Offers</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label form-label-cyber">Incident Description</label>
+                        <textarea class="form-control form-control-cyber" id="description" name="description" rows="4" required placeholder="Describe how you encountered this threat, what details were requested, and any financial losses occurred..."></textarea>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="websiteUrl" class="form-label form-label-cyber">Website URL (If applicable)</label>
+                            <input type="url" class="form-control form-control-cyber" id="websiteUrl" name="websiteUrl" placeholder="https://secure-bank-reset.xyz">
+                            <div class="form-text text-secondary" style="font-size: 0.75rem;">URLs will be scanned immediately by our automated analyzer.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="evidenceFile" class="form-label form-label-cyber">Upload Evidence Attachment</label>
+                            <input type="file" class="form-control form-control-cyber" id="evidenceFile" name="evidenceFile">
+                            <div class="form-text text-secondary" style="font-size: 0.75rem;">Upload screenshots (PNG, JPG, PDF) of the email or SMS text.</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="location" class="form-label form-label-cyber">Incident Location / City</label>
+                            <input type="text" class="form-control form-control-cyber" id="location" name="location" required placeholder="e.g., New York, NY">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="contactInfo" class="form-label form-label-cyber">Alternate Contact Information</label>
+                            <input type="text" class="form-control form-control-cyber" id="contactInfo" name="contactInfo" required placeholder="Phone number or alternate email">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-cyber-cyan w-100 py-2.5"><i class="fa-solid fa-paper-plane me-2"></i>Submit Security Incident Report</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>

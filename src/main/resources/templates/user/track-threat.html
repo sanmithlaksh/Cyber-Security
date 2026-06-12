@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Track Incident Status')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <span class="badge badge-medium mb-3 px-3 py-2 text-uppercase fw-bold"><i class="fa-solid fa-magnifying-glass me-1"></i> Tracking Center</span>
+        <h1 class="display-5 font-heading text-white mb-2">Incident Tracking System</h1>
+        <p class="text-secondary col-md-8 mx-auto">Track the progression of your submitted cyber threat reports. Insert your custom Report ID below to retrieve real-time analyst logs.</p>
+    </div>
+
+    <!-- Search Form -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-6">
+            <div class="glass-card p-4">
+                <form th:action="@{/reports/track}" method="GET" class="d-flex gap-2" onsubmit="this.action = '/reports/track/' + document.getElementById('searchId').value.trim();">
+                    <input type="text" id="searchId" class="form-control form-control-cyber" required placeholder="Enter Report ID (e.g., CYB-2026-1001)...">
+                    <button type="submit" class="btn btn-cyber-cyan px-4"><i class="fa-solid fa-magnifying-glass me-2"></i>Track</button>
+                </form>
+            </div>
+            <!-- Error messages -->
+            <div th:if="${errorMessage}" class="alert alert-danger border-0 mt-4 text-center" style="background: rgba(239, 68, 68, 0.15); color: var(--color-critical); border-radius: 8px;">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                <span th:text="${errorMessage}">Error Message</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tracking Timeline Results -->
+    <div class="row justify-content-center" th:if="${report}">
+        <div class="col-lg-8">
+            <div class="glass-card p-5">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 border-bottom pb-3" style="border-bottom: 1px solid var(--border-glass) !important;">
+                    <div>
+                        <span class="text-secondary" style="font-size: 0.85rem;">Incident Case File</span>
+                        <h3 class="text-white font-heading mb-0" th:text="${report.reportId}">CYB-2026-1001</h3>
+                    </div>
+                    <span th:class="'badge px-3 py-2 text-uppercase ' + 
+                                  (${report.severity == 'CRITICAL'} ? 'badge-critical' : 
+                                  (${report.severity == 'HIGH'} ? 'badge-high' : 
+                                  (${report.severity == 'MEDIUM'} ? 'badge-medium' : 'badge-safe')))"
+                          th:text="${report.severity} + ' SEVERITY'">CRITICAL SEVERITY</span>
+                </div>
+
+                <!-- Incident Core Metadata -->
+                <div class="row g-4 mb-5 text-secondary" style="font-size: 0.95rem;">
+                    <div class="col-sm-6">
+                        <p class="mb-2"><strong class="text-white">Title:</strong> <span th:text="${report.title}">Incident Title</span></p>
+                        <p class="mb-2"><strong class="text-white">Category:</strong> <span th:text="${report.threatType}">Category</span></p>
+                        <p class="mb-0" th:if="${report.websiteUrl}"><strong class="text-white">Website URL:</strong> <a th:href="${report.websiteUrl}" target="_blank" class="text-cyan text-decoration-none" th:text="${report.websiteUrl}">url</a></p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="mb-2"><strong class="text-white">Date Reported:</strong> <span th:text="${#temporals.format(report.dateTime, 'yyyy-MM-dd HH:mm')}">Date</span></p>
+                        <p class="mb-2"><strong class="text-white">Location:</strong> <span th:text="${report.location}">Location</span></p>
+                        <p class="mb-0"><strong class="text-white">Risk Score:</strong> <span class="text-white fw-bold" th:text="${report.riskScore} + '/100'">Risk</span></p>
+                    </div>
+                </div>
+
+                <!-- Timeline Visual Block -->
+                <h5 class="text-white font-heading mb-4"><i class="fa-solid fa-route text-cyan me-1"></i> Case Investigation Timeline</h5>
+                
+                <div class="timeline-tracker mb-5">
+                    <!-- Step 1: Submitted -->
+                    <div class="timeline-item completed">
+                        <div class="timeline-dot"></div>
+                        <h6 class="text-white font-heading mb-1">Incident Report Submitted</h6>
+                        <p class="text-secondary mb-0" style="font-size: 0.85rem;">Case registered in system. Automated security scanner completed initial checks.</p>
+                    </div>
+
+                    <!-- Step 2: Under Review -->
+                    <div th:class="'timeline-item ' + 
+                                  (${report.status == 'UNDER_REVIEW'} ? 'active' : 
+                                  ((${report.status == 'INVESTIGATING'} or ${report.status == 'RESOLVED'} or ${report.status == 'CLOSED'}) ? 'completed' : ''))">
+                        <div class="timeline-dot"></div>
+                        <h6 class="text-white font-heading mb-1">Under Review</h6>
+                        <p class="text-secondary mb-0" style="font-size: 0.85rem;">The report is being triaged by our cyber defense dispatcher for severity assessment.</p>
+                    </div>
+
+                    <!-- Step 3: Investigating -->
+                    <div th:class="'timeline-item ' + 
+                                  (${report.status == 'INVESTIGATING'} ? 'active' : 
+                                  ((${report.status == 'RESOLVED'} or ${report.status == 'CLOSED'}) ? 'completed' : ''))">
+                        <div class="timeline-dot"></div>
+                        <h6 class="text-white font-heading mb-1">Active Investigation</h6>
+                        <p class="text-secondary mb-0" style="font-size: 0.85rem;">A cybersecurity analyst has been assigned to audit URL code, headers, and logs.</p>
+                    </div>
+
+                    <!-- Step 4: Resolved -->
+                    <div th:class="'timeline-item ' + 
+                                  (${report.status == 'RESOLVED'} ? 'active' : 
+                                  (${report.status == 'CLOSED'} ? 'completed' : ''))">
+                        <div class="timeline-dot"></div>
+                        <h6 class="text-white font-heading mb-1">Resolved</h6>
+                        <p class="text-secondary mb-0" style="font-size: 0.85rem;">Countermeasures taken. Malicious sites blacklisted, phishing campaigns flagged, or mitigation complete.</p>
+                    </div>
+
+                    <!-- Step 5: Closed -->
+                    <div th:class="'timeline-item ' + (${report.status == 'CLOSED'} ? 'active' : '')">
+                        <div class="timeline-dot"></div>
+                        <h6 class="text-white font-heading mb-1">Case Closed</h6>
+                        <p class="text-secondary mb-0" style="font-size: 0.85rem;">Case audited and archive logs stored securely. No further action needed.</p>
+                    </div>
+                </div>
+
+                <!-- Analyst Notes and Evidence -->
+                <div class="row g-4 border-top pt-4" style="border-top: 1px solid var(--border-glass) !important;">
+                    <div class="col-md-6" th:if="${report.analystNotes}">
+                        <div class="p-3 rounded" style="background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.25);">
+                            <h6 class="text-white font-heading mb-2" style="color: var(--neon-purple);"><i class="fa-solid fa-comment-dots me-1"></i> Analyst Investigation Notes</h6>
+                            <p class="text-secondary mb-0" style="font-size: 0.9rem;" th:text="${report.analystNotes}">Notes go here.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6" th:if="${report.evidencePath}">
+                        <h6 class="text-white font-heading mb-2"><i class="fa-solid fa-paperclip text-cyan me-1"></i> Submitted File Evidence</h6>
+                        <a th:href="${report.evidencePath}" target="_blank" class="btn btn-sm btn-outline-cyber">
+                            <i class="fa-solid fa-download me-1"></i> View/Download Uploaded File
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>

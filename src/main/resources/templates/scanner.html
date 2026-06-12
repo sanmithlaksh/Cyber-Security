@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('URL Threat Scanner')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <span class="badge badge-medium mb-3 px-3 py-2 text-uppercase fw-bold"><i class="fa-solid fa-globe me-1"></i> Web Scanner</span>
+        <h1 class="display-5 font-heading text-white mb-2">Suspicious URL Scanner</h1>
+        <p class="text-secondary col-md-8 mx-auto">Manually check links, payment paths, or domain names to analyze security certificate presence, blacklists, and high-risk domain extensions.</p>
+    </div>
+
+    <!-- Scan Form -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8">
+            <div class="glass-card p-4">
+                <form th:action="@{/scanner}" method="POST">
+                    <div class="mb-3">
+                        <label for="url" class="form-label form-label-cyber">Enter Website URL to Analyze</label>
+                        <div class="input-group">
+                            <span class="input-group-text form-control-cyber" style="border-right: none;"><i class="fa-solid fa-link"></i></span>
+                            <input type="url" name="url" id="url" class="form-control form-control-cyber" style="border-left: none;" th:value="${url}" required placeholder="https://secure-bank-login.xyz/signin">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-cyber-cyan w-100 py-2.5"><i class="fa-solid fa-shield-halved me-2"></i>Initiate Security Scan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scan Results -->
+    <div class="row justify-content-center" th:if="${scanResult}">
+        <div class="col-md-8">
+            <div class="glass-card p-5">
+                <div class="text-center mb-4 border-bottom pb-4" style="border-bottom: 1px solid var(--border-glass) !important;">
+                    <h3 class="text-white font-heading mb-1"><i class="fa-solid fa-square-poll-vertical text-cyan me-2"></i>Scan Result</h3>
+                    <p class="text-secondary">Analyzed Target: <strong class="text-white" th:text="${url}">https://example.com</strong></p>
+                </div>
+
+                <div class="row align-items-center mb-4">
+                    <!-- Progress Bar/Indicator -->
+                    <div class="col-md-6 text-center border-end" style="border-right: 1px solid var(--border-glass) !important;">
+                        <h5 class="text-secondary font-heading mb-3">Threat Risk Level</h5>
+                        
+                        <span th:class="'badge px-4 py-3 fs-5 mb-3 text-uppercase ' + 
+                                      (${scanResult.riskLevel == 'CRITICAL'} ? 'badge-critical' : 
+                                      (${scanResult.riskLevel == 'HIGH'} ? 'badge-high' : 
+                                      (${scanResult.riskLevel == 'MEDIUM'} ? 'badge-medium' : 'badge-safe')))"
+                              th:text="${scanResult.riskLevel} + ' RISK'">CRITICAL RISK</span>
+
+                        <div class="mt-2 text-secondary" style="font-size: 0.9rem;">
+                            Overall Risk Score: <strong class="text-white" th:text="${scanResult.score} + '/100'">85/100</strong>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 ps-md-4 mt-3 mt-md-0">
+                        <h5 class="text-white font-heading mb-2">Risk Meter</h5>
+                        <div class="progress" style="background: rgba(255,255,255,0.05); height: 16px; border-radius: 8px;">
+                            <div th:class="'progress-bar ' + 
+                                            (${scanResult.riskLevel == 'CRITICAL'} ? 'bg-danger' : 
+                                            (${scanResult.riskLevel == 'HIGH'} ? 'bg-warning' : 
+                                            (${scanResult.riskLevel == 'MEDIUM'} ? 'bg-info' : 'bg-success')))"
+                                 role="progressbar" 
+                                 th:style="'width: ' + ${scanResult.score} + '%; border-radius: 8px;'"
+                                 th:aria-valuenow="${scanResult.score}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100"></div>
+                        </div>
+                        <p class="text-secondary mt-3 mb-0" style="font-size: 0.85rem;">
+                            Scores between 0-30 represent Safe. Scores 31-60 are Medium Risk, 61-80 indicate High Risk, and scores above 81 show Critical risk vectors.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass);">
+                    <h5 class="text-white font-heading mb-3"><i class="fa-solid fa-list-check text-cyan me-1"></i> Scan Recommendations</h5>
+                    <pre class="text-secondary mb-0" style="font-family: 'Inter', sans-serif; white-space: pre-wrap;" th:text="${scanResult.recommendations}">- Recommendations go here.</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>

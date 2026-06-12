@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Home')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<!-- Hero Section -->
+<header class="py-5 text-center text-md-start" style="background: radial-gradient(circle at 10% 20%, rgba(6,182,212,0.1) 0%, transparent 60%); padding: 6rem 0 !important;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <span class="badge badge-medium mb-3 px-3 py-2 text-uppercase fw-bold"><i class="fa-solid fa-triangle-exclamation me-1"></i> Public Cyber Defense Portal</span>
+                <h1 class="display-4 font-heading text-white mb-3" style="font-weight: 800; line-height: 1.1;">
+                    Defending Citizens from <span class="text-gradient-cyan-purple">Cyber Threats</span>
+                </h1>
+                <p class="lead text-secondary mb-4" style="font-size: 1.15rem;">
+                    CyberShield is a centralized cybercrime reporting, tracking, and threat intelligence database. Report scam websites, phishing campaigns, identity theft, or ransomware incidents, and learn how to secure your digital footprint.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a th:href="@{/reports/new}" class="btn btn-cyber-cyan btn-lg px-4"><i class="fa-solid fa-bullhorn me-2"></i>Report a Threat</a>
+                    <a th:href="@{/reports/track}" class="btn btn-outline-cyber btn-lg px-4"><i class="fa-solid fa-magnifying-glass me-2"></i>Track Case Status</a>
+                </div>
+            </div>
+            <div class="col-md-5 d-none d-md-block text-center position-relative">
+                <i class="fa-solid fa-shield-halved text-gradient-cyan-purple" style="font-size: 14rem; opacity: 0.15; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: blur(3px);"></i>
+                <i class="fa-solid fa-user-shield text-glow-cyan" style="font-size: 12rem; color: var(--neon-cyan); filter: drop-shadow(0 0 20px var(--neon-cyan-glow));"></i>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Live Statistics Section -->
+<section class="py-5" style="background: rgba(15,23,42,0.4); border-top: 1px solid var(--border-glass); border-bottom: 1px solid var(--border-glass);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="font-heading text-white">CyberShield Live Impact Metrics</h2>
+            <p class="text-secondary">Real-time statistics aggregating reported cases, resolved threats, and active security analysts.</p>
+        </div>
+        <div class="row g-4">
+            <!-- Total Reports -->
+            <div class="col-md-3 col-sm-6">
+                <div class="glass-card p-4 text-center">
+                    <div class="mb-3 text-cyan"><i class="fa-solid fa-file-invoice-dollar fs-2 text-cyan" style="color: var(--neon-cyan);"></i></div>
+                    <div class="stat-number text-cyan" th:text="${totalThreats}">248</div>
+                    <div class="stat-label mt-2">Threats Reported</div>
+                </div>
+            </div>
+            <!-- Active Investigations -->
+            <div class="col-md-3 col-sm-6">
+                <div class="glass-card p-4 text-center">
+                    <div class="mb-3 text-purple"><i class="fa-solid fa-magnifying-glass-chart fs-2 text-purple" style="color: var(--neon-purple);"></i></div>
+                    <div class="stat-number text-purple" th:text="${activeInvestigations}">34</div>
+                    <div class="stat-label mt-2">Active Cases</div>
+                </div>
+            </div>
+            <!-- Resolved Cases -->
+            <div class="col-md-3 col-sm-6">
+                <div class="glass-card p-4 text-center">
+                    <div class="mb-3 text-success"><i class="fa-solid fa-circle-check fs-2 text-success" style="color: var(--color-safe);"></i></div>
+                    <div class="stat-number text-success" th:text="${resolvedCases}">182</div>
+                    <div class="stat-label mt-2">Cases Resolved</div>
+                </div>
+            </div>
+            <!-- Registered Users -->
+            <div class="col-md-3 col-sm-6">
+                <div class="glass-card p-4 text-center">
+                    <div class="mb-3 text-white"><i class="fa-solid fa-users fs-2 text-white"></i></div>
+                    <div class="stat-number" th:text="${registeredUsers}">1,120</div>
+                    <div class="stat-label mt-2">Registered Citizens</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 container">
+    <div class="text-center mb-5 mt-4">
+        <h2 class="font-heading text-white">Integrated Cyber Defense Suite</h2>
+        <p class="text-secondary">Explore our automated tools designed to detect, track, analyze, and simulate cyber threats.</p>
+    </div>
+    <div class="row g-4">
+        <!-- Threat DB -->
+        <div class="col-md-4">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <i class="fa-solid fa-database text-cyan fs-3 mb-3" style="color: var(--neon-cyan);"></i>
+                    <h4 class="text-white font-heading mb-2">Threat Database</h4>
+                    <p class="text-secondary">Search the centralized cybercrime repository to discover common scam formats, OTP fraud alerts, and verified safety tips.</p>
+                </div>
+                <a th:href="@{/threat-db}" class="btn btn-outline-cyber w-100 mt-3">Search Database</a>
+            </div>
+        </div>
+        <!-- URL Scanner -->
+        <div class="col-md-4">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <i class="fa-solid fa-globe text-cyan fs-3 mb-3" style="color: var(--neon-cyan);"></i>
+                    <h4 class="text-white font-heading mb-2">URL Scanner</h4>
+                    <p class="text-secondary">Check links, domains, and suspicious websites for secure HTTPS certificates, age indicators, blacklist records, and keyword penalties.</p>
+                </div>
+                <a th:href="@{/scanner}" class="btn btn-outline-cyber w-100 mt-3">Scan Link</a>
+            </div>
+        </div>
+        <!-- Email Detector -->
+        <div class="col-md-4">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <i class="fa-solid fa-envelope-open-text text-cyan fs-3 mb-3" style="color: var(--neon-cyan);"></i>
+                    <h4 class="text-white font-heading mb-2">Email Detector</h4>
+                    <p class="text-secondary">Paste email texts to calculate phishing probabilities, analyzing urgency triggers, coercion phrases, and banking credential lures.</p>
+                </div>
+                <a th:href="@{/phishing-detector}" class="btn btn-outline-cyber w-100 mt-3">Check Email</a>
+            </div>
+        </div>
+        <!-- Quiz -->
+        <div class="col-md-6">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <i class="fa-solid fa-graduation-cap text-purple fs-3 mb-3" style="color: var(--neon-purple);"></i>
+                    <h4 class="text-white font-heading mb-2">Security Awareness Quizzes</h4>
+                    <p class="text-secondary">Test your cybersecurity acumen across topics like Phishing, Password Robustness, and Safe Browsing. Score 80% or higher to earn your digital certificate.</p>
+                </div>
+                <a th:href="@{/quiz}" class="btn btn-cyber-purple w-100 mt-3">Take the Quiz</a>
+            </div>
+        </div>
+        <!-- Simulation Lab -->
+        <div class="col-md-6">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <i class="fa-solid fa-network-wired text-purple fs-3 mb-3" style="color: var(--neon-purple);"></i>
+                    <h4 class="text-white font-heading mb-2">Simulation Lab & Dijkstra Pathing</h4>
+                    <p class="text-secondary">Visualizes network attacks. Administrators trigger phishing or malware spreads on our topology. Uses Dijkstra's algorithm to analyze attack paths.</p>
+                </div>
+                <a th:href="@{/login}" class="btn btn-cyber-purple w-100 mt-3">Access Lab</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>

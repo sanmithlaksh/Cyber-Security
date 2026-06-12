@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Register')}"></head>
+<body class="d-flex flex-column" style="min-height: 100vh;">
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container my-auto py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <!-- Message Alert -->
+            <div th:if="${errorMessage}" class="alert alert-danger border-0 mb-4" style="background: rgba(239, 68, 68, 0.15); color: var(--color-critical); border-radius: 8px;">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                <span th:text="${errorMessage}">Error Message</span>
+            </div>
+
+            <div class="glass-card p-5">
+                <div class="text-center mb-4">
+                    <i class="fa-solid fa-user-plus text-cyan fs-1 mb-2" style="color: var(--neon-cyan); filter: drop-shadow(0 0 8px var(--neon-cyan-glow));"></i>
+                    <h3 class="text-white font-heading">Citizen Registration</h3>
+                    <p class="text-secondary">Join CyberShield to track threats and verify security</p>
+                </div>
+
+                <form th:action="@{/api/auth/register}" method="POST">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label form-label-cyber">Full Name</label>
+                            <input type="text" class="form-control form-control-cyber" id="name" name="name" th:value="${name}" required placeholder="John Doe">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label form-label-cyber">Email Address</label>
+                            <input type="email" class="form-control form-control-cyber" id="email" name="email" th:value="${email}" required placeholder="john@example.com">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label form-label-cyber">Phone Number</label>
+                            <input type="text" class="form-control form-control-cyber" id="phone" name="phone" th:value="${phone}" required placeholder="+19999999999">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="role" class="form-label form-label-cyber">Account Role</label>
+                            <select class="form-select form-control-cyber" id="role" name="role" required>
+                                <option value="ROLE_USER" th:selected="${role == 'ROLE_USER'}">Citizen (User)</option>
+                                <option value="ROLE_ANALYST" th:selected="${role == 'ROLE_ANALYST'}">Cyber Analyst</option>
+                                <option value="ROLE_ADMIN" th:selected="${role == 'ROLE_ADMIN'}">Administrator</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="password" class="form-label form-label-cyber">Password</label>
+                            <input type="password" class="form-control form-control-cyber" id="password" name="password" required placeholder="••••••••">
+                            <div class="form-text text-secondary" style="font-size: 0.75rem;">
+                                Min 8 chars, 1 uppercase, 1 digit, 1 special char.
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="confirmPassword" class="form-label form-label-cyber">Confirm Password</label>
+                            <input type="password" class="form-control form-control-cyber" id="confirmPassword" name="confirmPassword" required placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-cyber-cyan w-100 py-2.5 mb-3"><i class="fa-solid fa-user-check me-2"></i>Create Account</button>
+                </form>
+
+                <div class="text-center">
+                    <p class="text-secondary mb-0">Already registered? <a th:href="@{/login}" class="text-cyan text-decoration-none" style="color: var(--neon-cyan);">Login Here</a></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>

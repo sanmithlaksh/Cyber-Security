@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Run Quiz')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <div class="mb-4 d-flex justify-content-between align-items-center">
+                <a th:href="@{/quiz}" class="text-secondary text-decoration-none"><i class="fa-solid fa-arrow-left me-1"></i> Back to Quizzes</a>
+                <span class="badge badge-medium text-uppercase px-3 py-1.5" th:text="${category} + ' Category'">Category</span>
+            </div>
+
+            <div class="glass-card p-5">
+                <div class="mb-4 border-bottom pb-3" style="border-bottom: 1px solid var(--border-glass) !important;">
+                    <h2 class="text-white font-heading mb-1">Security Competency Quiz</h2>
+                    <p class="text-secondary mb-0">Answer all questions below. You need at least 80% to earn your completion badge.</p>
+                </div>
+
+                <form th:action="@{/quiz/submit}" method="POST">
+                    <input type="hidden" name="category" th:value="${category}">
+
+                    <!-- Questions Loop -->
+                    <div th:each="q, iter : ${questions}" class="mb-5 border-bottom pb-4" style="border-bottom: 1px solid rgba(255,255,255,0.04) !important;">
+                        <h5 class="text-white mb-3 font-heading">
+                            <span class="text-cyan me-1" th:text="${iter.count} + '.'">1.</span>
+                            <span th:text="${q.questionText}">Question text goes here</span>
+                        </h5>
+
+                        <div class="d-flex flex-column gap-2 ps-3">
+                            <!-- Option A -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" th:name="'answer_' + ${q.id}" th:id="'q_' + ${q.id} + '_a'" value="A" required>
+                                <label class="form-check-label text-secondary" th:for="'q_' + ${q.id} + '_a'" th:text="${q.optionA}">Option A</label>
+                            </div>
+                            <!-- Option B -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" th:name="'answer_' + ${q.id}" th:id="'q_' + ${q.id} + '_b'" value="B">
+                                <label class="form-check-label text-secondary" th:for="'q_' + ${q.id} + '_b'" th:text="${q.optionB}">Option B</label>
+                            </div>
+                            <!-- Option C -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" th:name="'answer_' + ${q.id}" th:id="'q_' + ${q.id} + '_c'" value="C">
+                                <label class="form-check-label text-secondary" th:for="'q_' + ${q.id} + '_c'" th:text="${q.optionC}">Option C</label>
+                            </div>
+                            <!-- Option D -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" th:name="'answer_' + ${q.id}" th:id="'q_' + ${q.id} + '_d'" value="D">
+                                <label class="form-check-label text-secondary" th:for="'q_' + ${q.id} + '_d'" th:text="${q.optionD}">Option D</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-cyber-cyan w-100 py-2.5 mt-3"><i class="fa-solid fa-square-check me-2"></i>Submit Quiz Answers</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>
